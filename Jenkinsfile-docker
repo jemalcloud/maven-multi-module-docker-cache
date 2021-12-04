@@ -1,0 +1,51 @@
+pipeline {
+    agent {
+        docker {
+            image 'maven:3.8.1-adoptopenjdk-11'
+            args '-v $HOME/.m2:/root/.m2'
+        }
+    }
+
+    parameters {
+    choice(name: 'door_choice',
+      choices: 'one\ntwo\nthree\nfour',
+      description: 'What door do you choose?')
+    booleanParam(name: 'CAN_DANCE',
+      defaultValue: true,
+      description: 'Checkbox parameter')
+    string(name: 'sTrAnGePaRaM',
+      defaultValue: 'Dance!',
+      description: 'Do the funky chicken!')
+    }
+
+    environment {
+        AWS_ACCESS_KEY_ID     = credentials('jenkins-aws-secret-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws-secret-access-key')
+    }
+
+    stages {
+        stage ('Initialize') {
+            steps {
+                sh '''
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+                ''' 
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn -Dmaven.test.failure.ignore=true install'
+            }
+            post {
+                success {
+                    junit 'target/surefire-reports/**/*.xml' 
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn clean test'
+            }
+        }
+    }
+}
