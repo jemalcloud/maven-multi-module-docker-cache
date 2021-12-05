@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'image 'maven:3-alpine'
-            args '-v /root/.m2:/root/.m2'
+            args '-v $HOME/.m2:/root/.m2'
         }
     }
 
@@ -19,12 +19,12 @@ pipeline {
     }
 
     environment {
-        AWS_ACCESS_KEY_ID     = credentials('jenkins-aws-secret-key-id')
-        AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws-secret-access-key')
+        //AWS_ACCESS_KEY_ID     = credentials('jenkins-aws-secret-key-id')
+        //AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws-secret-access-key')
     }
 
     stages {
-        stage ('Initialize') {
+        stage ('test') {
             steps {
                 sh '''
                     echo "PATH = ${PATH}"
