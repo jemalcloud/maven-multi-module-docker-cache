@@ -21,6 +21,7 @@ pipeline {
     environment {
         //AWS_ACCESS_KEY_ID     = credentials('jenkins-aws-secret-key-id')
         //AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws-secret-access-key')
+        TEST_REPORT = 'target/surefire-reports/**/*.xml'
     }
 
     stages {
@@ -38,7 +39,7 @@ pipeline {
             }
             post {
                 success {
-                    junit 'target/surefire-reports/**/*.xml' 
+                    junit env.TEST_REPORT
                 }
             }
         }
